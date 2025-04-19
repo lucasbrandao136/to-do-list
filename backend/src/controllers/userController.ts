@@ -1,14 +1,13 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
 import UserModel from "../models/User";
-import { type IUser } from "../models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export const register = async (req: Request, res: Response) => {
-  try {
+export const register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
     const { email, password, fullName, displayName, birthday, photoUrl } = req.body;
 
     const existingUser = await UserModel.findByEmail(email);
@@ -29,13 +28,14 @@ export const register = async (req: Request, res: Response) => {
 
     return res.status(201).json(newUser);
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Erro inesperado no servidor." });
+    next(error); 
+    // console.log(error);
+    // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }
 };
 
-export const login = async (req: Request, res: Response) => {
-  try {
+export const login = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
     const { email, password } = req.body;
 
     const user = await UserModel.findByEmail(email);
@@ -52,12 +52,8 @@ export const login = async (req: Request, res: Response) => {
 
     return res.json({ token, user });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Erro inesperado no servidor." });
+    next(error); 
+    // console.log(error);
+    // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }
 };
-
-module.exports = {
-    login: login,
-    register:register
-}

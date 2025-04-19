@@ -3,7 +3,8 @@ import { register, login } from "../controllers/userController";
 
 const router = Router();
 
-router.post("/register", register);
-router.post("/login", login);
+// Definição das rotas
+router.post('/register', register);
+router.post('/login', login);
 
 export default router;
