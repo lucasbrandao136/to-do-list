@@ -9,7 +9,6 @@ CREATE TABLE users (
   birthday DATE NOT NULL,
   full_name VARCHAR(255) NOT NULL,
   display_name VARCHAR(255) NOT NULL,
-  user_name VARCHAR(255) NOT NULL,
   photo_url VARCHAR(255)
 );
 
