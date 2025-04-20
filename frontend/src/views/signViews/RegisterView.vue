@@ -1,17 +1,31 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import { api } from "../services/api";
+import { api } from "../../services/api";
+import { uploadImageToCloudinary } from "@/services/uploadImage";
 
 const email = ref<string>("");
 const password = ref<string>("");
 const fullName = ref<string>("");
 const displayName = ref<string>("");
 const birthday = ref<string>("");
+const file = ref<File | null>(null);
 const photoUrl = ref<string>("");
 const passwordStrength = ref<number>(0);
 
+const handleFileChange = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  if (target.files && target.files[0]) {
+    file.value = target.files[0];
+  }
+};
+
 const handleSubmit = async () => {
   try {
+    if (file.value) {
+      const uploadedUrl = await uploadImageToCloudinary(file.value);
+      photoUrl.value = uploadedUrl;
+    }
+
     const response = await api.post("/register", {
       email: email.value,
       password: password.value,
@@ -35,16 +49,12 @@ const checkPasswordStrength = () => {
   const pass = password.value;
   let strength = 0;
 
-  // Critério 1: Tamanho mínimo (8 caracteres)
   if (pass.length >= 8) strength++;
 
-  // Critério 2: Contém letras maiúsculas e minúsculas
   if (/[a-z]/.test(pass) && /[A-Z]/.test(pass)) strength++;
 
-  // Critério 3: Contém números
   if (/\d/.test(pass)) strength++;
 
-  // Critério 4: Contém caracteres especiais
   if (/[!@#$%^&*(),.?":{}|<>]/.test(pass)) strength++;
 
   passwordStrength.value = Math.min(strength, 4);
@@ -180,17 +190,18 @@ const checkPasswordStrength = () => {
           </div>
         </div>
 
-        <!-- Photo URL -->
+        <!-- Photo Upload -->
         <div>
-          <label for="photoUrl" class="block text-sm font-medium text-gray-700">
+          <label for="file" class="block text-sm font-medium text-gray-700">
             Foto
           </label>
           <div class="mt-1">
             <input
-              id="photoUrl"
-              v-model="photoUrl"
-              name="photoUrl"
-              type="text"
+              id="file"
+              name="file"
+              type="file"
+              @change="handleFileChange"
+              accept="image/*"
               class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
           </div>
@@ -215,9 +226,7 @@ const checkPasswordStrength = () => {
             <div class="w-full border-t border-gray-300" />
           </div>
           <div class="relative flex justify-center text-sm">
-            <span class="px-2 bg-white text-gray-500">
-              Já tem uma conta?
-          </span>
+            <span class="px-2 bg-white text-gray-500"> Já tem uma conta? </span>
           </div>
         </div>
 
