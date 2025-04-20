@@ -1,11 +1,16 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
-import UserRegister from "@/components/UserRegister.vue";
+import SignScreen from "@/SignScreen.vue";
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/register", // Rota do Cadastro
+    path: "/register",
     name: "Register",
-    component: UserRegister, // Componente de Cadastro
+    component: SignScreen,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: SignScreen,
   },
 ];
 

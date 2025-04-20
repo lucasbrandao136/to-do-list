@@ -6,9 +6,14 @@ import UserModel from "../models/User";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
-export const register = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    try {
-    const { email, password, fullName, displayName, birthday, photoUrl } = req.body;
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
+    const { email, password, fullName, displayName, birthday, photoUrl } =
+      req.body;
 
     const existingUser = await UserModel.findByEmail(email);
     if (existingUser) {
@@ -28,14 +33,18 @@ export const register = async (req: Request, res: Response, next: NextFunction):
 
     return res.status(201).json(newUser);
   } catch (error) {
-    next(error); 
+    next(error);
     // console.log(error);
     // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }
 };
 
-export const login = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    try {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<any> => {
+  try {
     const { email, password } = req.body;
 
     const user = await UserModel.findByEmail(email);
@@ -52,7 +61,7 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
     return res.json({ token, user });
   } catch (error) {
-    next(error); 
+    next(error);
     // console.log(error);
     // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }

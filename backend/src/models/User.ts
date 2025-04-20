@@ -17,7 +17,7 @@ class UserModel {
     const query = `
     INSERT INTO users (email, password, full_name, display_name,  birthday, photo_url, registered_at, enabled_at)
     VALUES ($1, $2, $3, $4, $5, $6, NOW(), true)
-    RETURNING id, email, display_name, user_name, birthday, photo_url, registered_at, enabled_at;
+    RETURNING id, email, full_name, display_name, birthday, photo_url, registered_at, enabled_at;
     `;
 
     const values = [
@@ -34,7 +34,7 @@ class UserModel {
 
   async findByEmail(email: string) {
     const query = `
-SELECT * FROM user WHERE email = $1;`;
+      SELECT * FROM users WHERE email = $1;`;
 
     const { rows } = await pool.query(query, [email]);
     return rows[0];
