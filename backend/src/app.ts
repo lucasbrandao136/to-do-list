@@ -3,9 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
-// Importação de rotas (depois criamos elas)
 import userRoutes from "./routes/userRoutes";
-// import todoRoutes from './routes/todoRoutes';
+import todoRoutes from './routes/todoRoutes';
+
+import { authenticate } from "./middlewares/authMiddleware";
 
 const app = express();
 
@@ -15,7 +16,8 @@ app.use(express.json());
 
 // Rotas
 app.use("/api", userRoutes);
-// app.use('/api/todos', todoRoutes);
+app.use(authenticate); 
+app.use('/api', todoRoutes);
 
 app.use(
   (
@@ -24,7 +26,7 @@ app.use(
     res: express.Response,
     next: express.NextFunction,
   ) => {
-    console.error(err); // Log do erro completo
+    console.error(err); 
     res.status(500).json({ message: "Erro inesperado no servidor." });
   },
 );

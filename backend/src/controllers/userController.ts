@@ -34,8 +34,6 @@ export const register = async (
     return res.status(201).json(newUser);
   } catch (error) {
     next(error);
-    // console.log(error);
-    // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }
 };
 
@@ -62,7 +60,5 @@ export const login = async (
     return res.json({ token, user });
   } catch (error) {
     next(error);
-    // console.log(error);
-    // return res.status(500).json({ message: "Erro inesperado no servidor." });
   }
 };

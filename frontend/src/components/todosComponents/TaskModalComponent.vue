@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from "vue";
+import { api } from "@/services/api";
 
 const props = defineProps<{
   open: boolean;
@@ -35,14 +36,42 @@ const resetFields = () => {
   dueDate.value = "";
 };
 
-const handleSave = () => {
-  emit("save", {
-    title: title.value,
-    description: description.value,
-    dueDate: dueDate.value,
-  });
+// const handleLogin = async () => {
+//   try {
+//     const response = await api.post("/login", {
+//       email: email.value,
+//       password: password.value,
+//     });
+
+//     navigateTo("/home");
+//   } catch (error: any) {
+//     console.error(error);
+//     if (error.response && error.response.data && error.response.data.message) {
+//       console.log(error.response.data.message);
+//     } else {
+//       console.log("Erro ao tentar fazer login. Tente novamente.");
+//     }
+//   } finally {
+//   }
+// };
+
+const handleSave = async () => {
+  try {
+    const response = await api.post("/new/todo", {
+      title: title.value,
+      description: description.value,
+      dueDate: dueDate.value,
+    });
+  } catch (error: any) {
+    console.error(error);
+    if (error.response && error.response.data && error.response.data.message) {
+      console.log(error.response.data.message);
+    } else {
+      console.log("Erro ao tentar criar nova tarefa. Tente novamente.");
+    }
+  }
   resetFields();
-  emit("close");
+  //  navigateTo("/home");
 };
 
 const handleClose = () => {

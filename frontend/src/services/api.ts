@@ -11,6 +11,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
 
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
+    "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
   };
 
   const response = await fetch(url, {
@@ -23,8 +24,13 @@ async function request(endpoint: string, options: RequestOptions = {}) {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.message || "Erro no Servidor");
+    let errorMessage = "Erro no Servidor";
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.message || errorMessage;
+    } catch (error) {
+    }
+    throw new Error(errorMessage);
   }
 
   return response.json();
