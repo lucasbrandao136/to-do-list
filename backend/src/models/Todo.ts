@@ -48,7 +48,7 @@ class TodoModel {
     return rows[0];
   }
 
-  async findByUserId(userId: number) {
+  async getTodos(userId: number) {
     const query = `
       SELECT * FROM todos WHERE user_id = $1;`;
 

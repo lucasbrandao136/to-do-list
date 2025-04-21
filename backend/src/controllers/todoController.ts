@@ -4,11 +4,11 @@ import TodoModel from "../models/Todo";
 
 export const createTodo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
-    const {  title, description, dueDate } = req.body;
+    const { title, description, dueDate } = req.body;
 
     const userId = req.userId;
     console.log(userId);
-    console.log(title); 
+    console.log(title);
     if (
       !userId ||
       typeof userId !== "number" ||
@@ -27,3 +27,101 @@ export const createTodo = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getTodos = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const userId = req.userId;
+
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Usuário não encontrado." });
+    }
+
+    const todos = await TodoModel.getTodos(userId);
+
+    return res.json(todos);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteTodo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+  try {
+    const todoId = parseInt(req.params.id);
+    const userId = req.userId;
+
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Usuário não encontrado." });
+    }
+
+    if (!todoId) {
+      return res.status(400).json({ message: "ID do Todo não fornecido." });
+    }
+
+    const deletedTodo = await TodoModel.deleteTodo(todoId);
+
+    if (!deletedTodo) {
+      return res.status(404).json({ message: "Todo não encontrado." });
+    }
+
+    return res.json(deletedTodo);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+export const updateTodo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {  
+  try {
+    const todoId = parseInt(req.params.id);
+    const { title, description, dueDate, completed } = req.body;
+    const userId = req.userId;
+
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Usuário não encontrado." });
+    }
+
+    if (!todoId) {
+      return res.status(400).json({ message: "ID do Todo não fornecido." });
+    }
+
+    const updatedTodo = await TodoModel.updateTodo({
+      id: todoId,
+      title,
+      description,
+      dueDate,
+      completed,
+    });
+
+    if (!updatedTodo) {
+      return res.status(404).json({ message: "Todo não encontrado." });
+    }
+
+    return res.json(updatedTodo);
+  } catch (error) {
+    next(error);
+  }
+}
+export const getTodoById = async (req: Request, res: Response, next: NextFunction): Promise<any> => { 
+  try {
+    const todoId = parseInt(req.params.id);
+    const userId = req.userId;
+
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Usuário não encontrado." });
+    }
+
+    if (!todoId) {
+      return res.status(400).json({ message: "ID do Todo não fornecido." });
+    }
+
+    const todo = await TodoModel.findById(todoId);
+
+    if (!todo) {
+      return res.status(404).json({ message: "Todo não encontrado." });
+    }
+
+    return res.json(todo);
+  } catch (error) {
+    next(error);
+  }
+}
