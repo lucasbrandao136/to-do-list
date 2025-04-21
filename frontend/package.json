@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "vue-cli-service serve",
+    "serve": "concurrently -n BACKEND,FRONTEND -c red,cyan \"npm --prefix ../backend run dev\" \"vue-cli-service serve\"",
     "build": "vue-cli-service build",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
@@ -29,6 +29,7 @@
     "@vue/vue3-jest": "^27.0.0-alpha.1",
     "autoprefixer": "^10.4.21",
     "babel-jest": "^27.0.6",
+    "concurrently": "^9.1.2",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",

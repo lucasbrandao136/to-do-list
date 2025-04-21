@@ -1,13 +1,15 @@
 <script setup lang="ts">
 //  Vue Functions
-import { computed, toRefs, watch, ref } from "vue";
+import { computed, watch, ref } from "vue";
 import { useRoute } from "vue-router";
 
 // Components
 import Load from "../components/commonComponents/Load.vue";
 
 // Views
-import HomeView from "./views/todoViews/HomeView.vue";
+import LoginView from "./signViews/LoginView.vue";
+// import ForgotPasswordView from "./loginViews/ForgotPasswordView.vue";
+import RegisterView from "./signViews/RegisterView.vue";
 
 // Stores
 // import { useLoadingStore } from '../stores/loading'
@@ -21,21 +23,24 @@ const currentPath = ref(window.location.pathname);
 
 // Router
 const routes: any = {
-  0: HomeView,
+  0: RegisterView,
+  1: LoginView,
 };
 
 watch(
   () => route.params,
   async (): Promise<void> => {
     currentPath.value = window.location.pathname + window.location.hash;
-  },
+  }
 );
 
 const currentView = computed(() => {
   const _path = currentPath.value.split("/")[1];
   switch (_path) {
-    case "home":
+    case "register":
       return routes[0];
+    case "login":
+      return routes[1];
     default:
       return routes[0];
   }

@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 
-import SignScreen from "@/SignScreen.vue";
-import HomeScreen from "@/HomeScreen.vue";
+import SignScreen from "@/views/SignScreen.vue";
+import HomeScreen from "@/views/HomeScreen.vue";
 import { useAuthStore } from "@/stores/auth";
 const routes: Array<RouteRecordRaw> = [
   {
     path: "/register",
-    name: "Register",
+    name: "register",
     component: SignScreen,
   },
   {
@@ -27,6 +27,16 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/home",
     name: "Home",
+    component: HomeScreen,
+  },
+  {
+    path: "/tasks",
+    name: "tasks",
+    component: HomeScreen,
+  },
+  {
+    path: "/new/task",
+    name: "new-task",
     component: HomeScreen,
   },
 ];

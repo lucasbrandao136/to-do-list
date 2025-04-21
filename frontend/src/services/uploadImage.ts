@@ -9,7 +9,7 @@ export async function uploadImageToCloudinary(file: File): Promise<string> {
     {
       method: "POST",
       body: formData,
-    },
+    }
   );
 
   const data = await response.json();

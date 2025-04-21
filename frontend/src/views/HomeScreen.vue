@@ -1,15 +1,14 @@
 <script setup lang="ts">
 //  Vue Functions
-import { computed, watch, ref } from "vue";
+import { computed, toRefs, watch, ref } from "vue";
 import { useRoute } from "vue-router";
 
 // Components
 import Load from "../components/commonComponents/Load.vue";
 
 // Views
-import LoginView from "./views/signViews/LoginView.vue";
-// import ForgotPasswordView from "./loginViews/ForgotPasswordView.vue";
-import RegisterView from "./views/signViews/RegisterView.vue";
+import HomeView from "./todoViews/HomeView.vue";
+import TasksView from "./todoViews/TasksView.vue";
 
 // Stores
 // import { useLoadingStore } from '../stores/loading'
@@ -23,23 +22,25 @@ const currentPath = ref(window.location.pathname);
 
 // Router
 const routes: any = {
-  0: RegisterView,
-  1: LoginView,
+  0: HomeView,
+  1: TasksView,
 };
 
 watch(
   () => route.params,
   async (): Promise<void> => {
     currentPath.value = window.location.pathname + window.location.hash;
-  },
+  }
 );
 
 const currentView = computed(() => {
   const _path = currentPath.value.split("/")[1];
   switch (_path) {
-    case "register":
+    case "home":
       return routes[0];
-    case "login":
+    case "":
+      return routes[0];
+      case "tasks":
       return routes[1];
     default:
       return routes[0];
@@ -48,9 +49,7 @@ const currentView = computed(() => {
 </script>
 
 <template>
-  <div
-    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8"
-  >
+  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
     <component :is="currentView" />
   </div>
   <!-- <Load v-if="loading" /> -->
