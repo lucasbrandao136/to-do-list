@@ -12,7 +12,7 @@ const router = useRouter();
 
 const links = [
   { name: "Home", path: "/home", icon: "🏠" },
-  { name: "Tarefas", path: "/tasks", icon: "✅" },
+  { name: "Tarefas", path: "/todos", icon: "✅" },
   { name: "Listas", path: "/lists", icon: "📋" },
   { name: "Sair", path: "/login", icon: "🚪", isLogout: true },
 ];
@@ -46,7 +46,9 @@ function logout() {
         @click="navigate(link)"
         :class="[
           'flex items-center space-x-3 w-full text-left p-2 rounded-lg transition',
-          link.isLogout ? 'hover:bg-red-100 text-red-600' : 'hover:bg-gray-100 text-gray-700',
+          link.isLogout
+            ? 'hover:bg-red-100 text-red-600'
+            : 'hover:bg-gray-100 text-gray-700',
         ]"
       >
         <span class="text-2xl">{{ link.icon }}</span>

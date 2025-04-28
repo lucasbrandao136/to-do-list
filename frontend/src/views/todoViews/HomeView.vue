@@ -48,7 +48,6 @@ function createList() {
       </div>
     </div>
 
-
     <TaskModalComponent
       :open="isTaskModalOpen"
       mode="create"

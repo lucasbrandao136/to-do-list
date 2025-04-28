@@ -9,7 +9,9 @@ const emit = defineEmits(["edit", "delete"]);
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl shadow-md p-5 hover:shadow-lg transition mb-2">
+  <div
+    class="bg-white rounded-2xl shadow-md p-5 hover:shadow-lg transition mb-2"
+  >
     <div class="flex justify-between items-start mb-3">
       <h3 class="text-xl font-bold text-gray-800">{{ title }}</h3>
       <div class="flex gap-2">
@@ -32,7 +34,7 @@ const emit = defineEmits(["edit", "delete"]);
 
     <div class="text-sm text-gray-500">
       <i class="fas fa-calendar-alt mr-1"></i>
-      Prazo: {{ dueDate }}
+      Prazo: {{ new Date(dueDate).toLocaleDateString('pt-BR')  }}
     </div>
   </div>
 </template>

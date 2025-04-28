@@ -12,7 +12,7 @@ const props = defineProps<{
   };
 }>();
 
-const emit = defineEmits(["close", "save"]);
+const emit = defineEmits(["close"]);
 
 const title = ref("");
 const description = ref("");
@@ -36,25 +36,6 @@ const resetFields = () => {
   dueDate.value = "";
 };
 
-// const handleLogin = async () => {
-//   try {
-//     const response = await api.post("/login", {
-//       email: email.value,
-//       password: password.value,
-//     });
-
-//     navigateTo("/home");
-//   } catch (error: any) {
-//     console.error(error);
-//     if (error.response && error.response.data && error.response.data.message) {
-//       console.log(error.response.data.message);
-//     } else {
-//       console.log("Erro ao tentar fazer login. Tente novamente.");
-//     }
-//   } finally {
-//   }
-// };
-
 const handleSave = async () => {
   try {
     const response = await api.post("/new/todo", {
@@ -70,8 +51,7 @@ const handleSave = async () => {
       console.log("Erro ao tentar criar nova tarefa. Tente novamente.");
     }
   }
-  resetFields();
-  //  navigateTo("/home");
+  handleClose();
 };
 
 const handleClose = () => {
@@ -111,10 +91,7 @@ const handleClose = () => {
           {{ mode === "create" ? "Nova Tarefa" : "Editar Tarefa" }}
         </h2>
 
-        <form
-          @submit.prevent="handleSave"
-          class="space-y-4"
-        >
+        <form @submit.prevent="handleSave" class="space-y-4">
           <div>
             <label class="block text-sm font-medium mb-1">Título</label>
             <input

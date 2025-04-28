@@ -30,13 +30,13 @@ const routes: Array<RouteRecordRaw> = [
     component: HomeScreen,
   },
   {
-    path: "/tasks",
-    name: "tasks",
+    path: "/todos",
+    name: "todos",
     component: HomeScreen,
   },
   {
-    path: "/new/task",
-    name: "new-task",
+    path: "/new/todo",
+    name: "new-todo",
     component: HomeScreen,
   },
 ];

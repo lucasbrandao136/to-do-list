@@ -2,10 +2,15 @@
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
 
+import { useLoadingStore } from '@/stores/loadingStore'
+
+
 import HeaderComponent from "./components/commonComponents/HeaderComponent.vue";
 import SidebarComponent from "./components/commonComponents/SidebarComponent.vue";
 import FooterComponent from "./components/commonComponents/FooterComponent.vue";
+import LoadComponent from "./components/commonComponents/LoadComponent.vue";
 
+const loadingStore = useLoadingStore()
 const route = useRoute();
 const sidebarOpen = ref(false);
 
@@ -36,6 +41,7 @@ auth.loadUserFromLocalStorage();
         @closeSidebar="toggleSidebar"
       />
 
+      <LoadComponent v-if="loadingStore.loading"/>
       <main class="flex-1 p-4 bg-gray-100 overflow-y-auto">
         <router-view />
       </main>

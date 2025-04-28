@@ -8,7 +8,7 @@ import Load from "../components/commonComponents/Load.vue";
 
 // Views
 import HomeView from "./todoViews/HomeView.vue";
-import TasksView from "./todoViews/TasksView.vue";
+import TodosView from "./todoViews/TodosView.vue";
 
 // Stores
 // import { useLoadingStore } from '../stores/loading'
@@ -23,7 +23,7 @@ const currentPath = ref(window.location.pathname);
 // Router
 const routes: any = {
   0: HomeView,
-  1: TasksView,
+  1: TodosView,
 };
 
 watch(
@@ -40,7 +40,7 @@ const currentView = computed(() => {
       return routes[0];
     case "":
       return routes[0];
-      case "tasks":
+    case "todos":
       return routes[1];
     default:
       return routes[0];
@@ -49,7 +49,9 @@ const currentView = computed(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <div
+    class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8"
+  >
     <component :is="currentView" />
   </div>
   <!-- <Load v-if="loading" /> -->

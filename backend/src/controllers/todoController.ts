@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import TodoModel from "../models/Todo";
+import { transform } from "typescript";
 
 export const createTodo = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
@@ -38,7 +39,17 @@ export const getTodos = async (req: Request, res: Response, next: NextFunction):
 
     const todos = await TodoModel.getTodos(userId);
 
-    return res.json(todos);
+    const transformedTodos = todos.map((todo)=> ({
+      id: todo.id,
+      title: todo.title,
+      description: todo.description,
+      createdAt: todo.created_at,
+      updatedAt: todo.updated_at,
+      dueDate: todo.due_date,
+      completed: todo.completed,
+    }));
+
+    return res.json(transformedTodos);
   } catch (error) {
     next(error);
   }

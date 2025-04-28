@@ -3,14 +3,14 @@ const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   devServer: {
     proxy: {
-      '/backend': {
-        target: 'http://localhost:3000',
+      "/backend": {
+        target: "http://localhost:3000",
         changeOrigin: true,
-        pathRewrite: (path) => path.replace(/^\/backend/, ''),
+        pathRewrite: (path) => path.replace(/^\/backend/, ""),
       },
     },
     watchFiles: {
-      paths: ['src/**/*', 'public/**/*'],
+      paths: ["src/**/*", "public/**/*"],
       options: {
         poll: 1000,
       },
@@ -25,4 +25,4 @@ module.exports = defineConfig({
 // The `poll` option sets the polling interval for file changes.
 // The `proxy` property sets up a proxy for API requests.
 // The `target` option specifies the backend server URL.
-// The `changeOrigin` option allows cross-origin requests.  
+// The `changeOrigin` option allows cross-origin requests.

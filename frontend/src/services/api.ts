@@ -11,7 +11,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
 
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem("token") || ""}`,
+    Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
   };
 
   const response = await fetch(url, {
@@ -28,8 +28,7 @@ async function request(endpoint: string, options: RequestOptions = {}) {
     try {
       const errorData = await response.json();
       errorMessage = errorData.message || errorMessage;
-    } catch (error) {
-    }
+    } catch (error) {}
     throw new Error(errorMessage);
   }
 
