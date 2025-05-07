@@ -9,7 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET as string;
 export const register = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<any> => {
   try {
     const { email, password, fullName, displayName, birthday, photoUrl } =
@@ -40,7 +40,7 @@ export const register = async (
 export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction,
+  next: NextFunction
 ): Promise<any> => {
   try {
     const { email, password } = req.body;
@@ -56,8 +56,21 @@ export const login = async (
     }
 
     const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: "7d" });
+    const userResponse = {
+      id: user.id,
+      email: user.email,
+      displayName: user.display_name,
+      fullName: user.full_name,
+      photoUrl: user.photo_url,
+      birthday: user.birthday,
+      registeredAt: user.registered_at,
+      enabledAt: user.enabled_at,
+    };
 
-    return res.json({ token, user });
+    return res.json({
+      token,
+      user: userResponse,
+    });
   } catch (error) {
     next(error);
   }

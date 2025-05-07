@@ -3,96 +3,98 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/stores/auth";
+import AuthFormContainer from "@/components/auth/AuthFormContainer.vue";
+import FormInput from "@/components/ui/FormInput.vue";
+import Button from "@/components/ui/Button.vue";
 
+const router = useRouter();
 const email = ref("");
 const password = ref("");
-const router = useRouter();
-
-function navigateTo(path: string): void {
-  router.push(path);
-}
+const isLoading = ref(false);
+const errorMessage = ref<string | null>(null);
 
 const handleLogin = async () => {
   try {
+    isLoading.value = true;
+    errorMessage.value = null;
+
     const response = await api.post("/login", {
       email: email.value,
       password: password.value,
     });
 
-    const user = response.user;
-    const token = response.token;
+    const { user, token } = response;
 
-    const auth = useAuthStore();
-    const userToStore = {
+    useAuthStore().login({
       id: user.id,
       email: user.email,
       displayName: user.displayName,
       birthday: user.birthday,
       photoUrl: user.photoUrl,
-    };
+    }, token);
 
-    auth.login(userToStore, token);
-
-    navigateTo("/home");
+    router.push("/home");
   } catch (error: any) {
-    console.error(error);
-    if (error.response && error.response.data && error.response.data.message) {
-      console.log(error.response.data.message);
-    } else {
-      console.log("Erro ao tentar fazer login. Tente novamente.");
-    }
+    errorMessage.value = error.response?.data?.message || "Erro ao tentar fazer login. Tente novamente.";
+    console.error("Login error:", error);
   } finally {
+    isLoading.value = false;
   }
 };
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-      <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
-      <form @submit.prevent="handleLogin">
-        <div class="mb-4">
-          <label
-            class="block text-sm font-medium text-gray-700 mb-1"
-            for="email"
-            >Email</label
-          >
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            required
-            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-        <div class="mb-6">
-          <label
-            class="block text-sm font-medium text-gray-700 mb-1"
-            for="password"
-            >Senha</label
-          >
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            required
-            class="w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </div>
-        <div class="flex justify-between items-center mb-6">
-          <router-link
-            to="/forgot-password"
-            class="text-sm text-indigo-600 hover:underline"
-            >Esqueceu a senha?</router-link
-          >
-        </div>
-        <button
-          type="submit"
-          class="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700"
+  <AuthFormContainer title="Login">
+    <form class="space-y-4" @submit.prevent="handleLogin">
+      <FormInput
+        v-model="email"
+        label="Email"
+        id="login-email"
+        type="email"
+        autocomplete="username"
+        required
+      />
+
+      <FormInput
+        v-model="password"
+        label="Senha"
+        id="login-password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
+
+      <div class="flex items-center justify-between">
+        <router-link 
+          to="/forgot-password" 
+          class="text-sm text-purple-600 hover:text-purple-700 hover:underline"
         >
-          Entrar
-        </button>
-      </form>
+          Esqueceu a senha?
+        </router-link>
+      </div>
+
+      <Button 
+        type="submit" 
+        variant="primary" 
+        class="w-full"
+        :loading="isLoading"
+      >
+        Entrar
+      </Button>
+
+      <div v-if="errorMessage" class="rounded-md bg-red-50 p-3">
+        <p class="text-sm text-red-600">{{ errorMessage }}</p>
+      </div>
+    </form>
+
+    <div class="mt-6 text-center text-sm text-gray-600">
+      Não tem uma conta?
+      <router-link 
+        to="/register" 
+        class="font-medium text-purple-600 hover:text-purple-700 hover:underline"
+      >
+        Cadastre-se
+      </router-link>
     </div>
-  </div>
+  </AuthFormContainer>
 </template>
