@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { api } from "@/services/api";
-import { ref, computed, onMounted } from "vue";
-import { useLoadingStore } from "@/stores/loadingStore";
-const loadingStore = useLoadingStore();
-interface ITodo {
+import { ref, onMounted } from 'vue';
+import { api } from '@/services/api';
+import { useLoadingStore } from '@/stores/loadingStore';
+import TaskCardComponent from '@/components/todosComponents/TaskCardComponent.vue';
+// import EmptyState from '@/components/ui/EmptyState.vue';
+
+interface Todo {
   id: number;
   title: string;
   description: string;
@@ -13,46 +15,66 @@ interface ITodo {
   updatedAt: string;
 }
 
-const _todos = ref<ITodo[]>([]);
-const todos = computed(() => {
-  return _todos.value;
-});
-const getTodos = async () => {
+const loadingStore = useLoadingStore();
+const todos = ref<Todo[]>([]);
+const error = ref<string | null>(null);
+
+const fetchTodos = async (): Promise<void> => {
   try {
-    const response = await api.get("/todos");
-    _todos.value = response;
-  } catch (error: any) {
-    console.error(error);
-    if (error.response && error.response.data && error.response.data.message) {
-      console.log(error.response.data.message);
-    } else {
-      console.log("Erro ao tentar buscar tarefas. Tente novamente.");
-    }
+    loadingStore.setLoading(true);
+    error.value = null;
+    const response = await api.get('/todos');
+    todos.value = response.data || response; 
+  } catch (err: any) {
+    console.error('Failed to fetch todos:', err);
+    error.value = err.response?.data?.message || 'Erro ao carregar tarefas. Tente novamente.';
+  } finally {
+    loadingStore.setLoading(false);
   }
 };
-import TaskCardComponent from "@/components/todosComponents/TaskCardComponent.vue";
 
-const initializePage = async (): Promise<void> => {
-  loadingStore.setLoading(true);
-  await getTodos();
-  loadingStore.setLoading(false);
-
+const handleEdit = (id: number) => {
+  console.log('Edit todo:', id);
 };
-onMounted(async () => {
-  initializePage();
+
+const handleDelete = async (id: number) => {
+  try {
+    await api.delete(`/todos/${id}`);
+    await fetchTodos(); 
+  } catch (err) {
+    console.error('Failed to delete todo:', err);
+    error.value = 'Erro ao excluir tarefa. Tente novamente.';
+  }
+};
+
+onMounted(() => {
+  fetchTodos();
 });
 </script>
+
 <template>
-  <div
-    v-for="todo in todos"
-    key="todo.id"
-    class="mb-4"
-  >
-    <TaskCardComponent
-      :key="todo.id"
-      :title="todo.title"
-      :description="todo.description"
-      :dueDate="todo.dueDate"
-    />
+  <div class="space-y-4">
+    <!-- Error -->
+    <div v-if="error" class="bg-red-50 text-red-600 p-4 rounded-lg">
+      {{ error }}
+    </div>
+
+    <!--taskslist -->
+    <template v-if="todos.length > 0">
+      <TaskCardComponent
+        v-for="todo in todos"
+        :key="todo.id"
+        :todo="todo"
+        @edit="handleEdit(todo.id)"
+        @delete="handleDelete(todo.id)"
+      />
+    </template>
+
+    <!-- <EmptyState 
+      v-else
+      title="Nenhuma tarefa encontrada"
+      description="Comece criando sua primeira tarefa"
+      icon="📝"
+    /> -->
   </div>
 </template>

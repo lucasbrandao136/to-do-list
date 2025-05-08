@@ -1,132 +1,119 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
-import { api } from "@/services/api";
+import { ref, watch } from 'vue';
+import { api } from '@/services/api';
+import Button from '@/components/ui/Button.vue';
+import FormInput from '../ui/FormInput.vue';
+
+interface Task {
+  title: string;
+  description: string;
+  dueDate: string;
+}
 
 const props = defineProps<{
   open: boolean;
-  mode: "create" | "edit";
-  initialData?: {
-    title: string;
-    description: string;
-    dueDate: string;
-  };
+  mode: 'create' | 'edit';
+  initialData?: Partial<Task>;
 }>();
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close', 'save']);
 
-const title = ref("");
-const description = ref("");
-const dueDate = ref("");
+const task = ref<Task>({
+  title: '',
+  description: '',
+  dueDate: ''
+});
 
-watch(
-  () => props.initialData,
-  (newData) => {
-    if (newData) {
-      title.value = newData.title;
-      description.value = newData.description;
-      dueDate.value = newData.dueDate;
-    }
-  },
-  { immediate: true }
-);
+watch(() => props.initialData, (newData) => {
+  if (newData) {
+    task.value = { ...task.value, ...newData };
+  }
+}, { immediate: true });
 
-const resetFields = () => {
-  title.value = "";
-  description.value = "";
-  dueDate.value = "";
+const resetForm = () => {
+  task.value = { title: '', description: '', dueDate: '' };
 };
 
-const handleSave = async () => {
+const handleSubmit = async () => {
   try {
-    const response = await api.post("/new/todo", {
-      title: title.value,
-      description: description.value,
-      dueDate: dueDate.value,
-    });
-  } catch (error: any) {
-    console.error(error);
-    if (error.response && error.response.data && error.response.data.message) {
-      console.log(error.response.data.message);
-    } else {
-      console.log("Erro ao tentar criar nova tarefa. Tente novamente.");
-    }
+    const response = await api.post('/new/todo', task.value);
+    emit('save', task.value);
+    resetForm();
+  } catch (error) {
+    console.error('Erro ao salvar tarefa:', error);
   }
-  handleClose();
 };
 
 const handleClose = () => {
-  resetFields();
-  emit("close");
+  resetForm();
+  emit('close');
 };
 </script>
 
 <template>
-  <transition name="fade">
+  <transition name="modal-fade">
     <div
       v-if="open"
-      class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+      class="fixed inset-0 flex items-center justify-center p-4 z-50 bg-black bg-opacity-50"
+      @click.self="handleClose"
     >
-      <div class="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md relative">
-        <button
-          class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
-          @click="handleClose"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
-
-        <h2 class="text-2xl font-bold mb-5">
-          {{ mode === "create" ? "Nova Tarefa" : "Editar Tarefa" }}
-        </h2>
-
-        <form @submit.prevent="handleSave" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium mb-1">Título</label>
-            <input
-              v-model="title"
-              type="text"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-indigo-200"
-              required
-            />
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1">Descrição</label>
-            <textarea
-              v-model="description"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-indigo-200"
-              rows="3"
-            ></textarea>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium mb-1">Prazo</label>
-            <input
-              v-model="dueDate"
-              type="date"
-              class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring focus:ring-indigo-200"
-              required
-            />
-          </div>
-
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-md transform transition-all">
+        <header class="flex items-center justify-between p-6 border-b border-gray-100">
+          <h2 class="text-xl font-bold text-gray-900">
+            {{ mode === 'create' ? 'Nova Tarefa' : 'Editar Tarefa' }}
+          </h2>
           <button
-            type="submit"
-            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 rounded-md"
+            @click="handleClose"
+            class="text-gray-400 hover:text-gray-500"
+            aria-label="Fechar modal"
           >
-            {{ mode === "create" ? "Criar" : "Salvar Alterações" }}
+            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
+        </header>
+
+        <form @submit.prevent="handleSubmit" class="p-6 space-y-4">
+          <FormInput
+            v-model="task.title"
+            label="Título"
+            id="task-title"
+            type="text"
+            required
+            placeholder="Digite o título da tarefa"
+          />
+
+          <FormInput
+            v-model="task.description"
+            label="Descrição"
+            id="task-description"
+            type="textarea"
+            placeholder="Adicione detalhes sobre a tarefa"
+          />
+
+          <FormInput
+            v-model="task.dueDate"
+            label="Prazo"
+            id="task-due-date"
+            type="date"
+            required
+          />
+
+          <div class="flex justify-end gap-3 pt-4">
+            <Button
+              type="button"
+              variant="secondary"
+              @click="handleClose"
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+            >
+              {{ mode === 'create' ? 'Criar Tarefa' : 'Salvar' }}
+            </Button>
+          </div>
         </form>
       </div>
     </div>
@@ -134,12 +121,13 @@ const handleClose = () => {
 </template>
 
 <style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s;
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.3s ease;
 }
-.fade-enter-from,
-.fade-leave-to {
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
   opacity: 0;
 }
 </style>
