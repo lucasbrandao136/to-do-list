@@ -1,19 +1,26 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-import TaskModalComponent from '@/components/todosComponents/TaskModalComponent.vue';
-import ListModalComponent from '@/components/list/ListModalComponent.vue';
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import TaskModalComponent from "@/components/todosComponents/TaskModalComponent.vue";
+import ListModalComponent from "@/components/list/ListModalComponent.vue";
+
+import { useFeedbackStore } from "@/stores/feedbackStore";
+
 const router = useRouter();
+const feedbackStore = useFeedbackStore();
+
 const isTaskModalOpen = ref(false);
 const isListModalOpen = ref(false);
 
-const handleSaveTask = (task: any) => {
-  console.log('Tarefa salva:', task);
+const handleSaveTask = () => {
+  feedbackStore.showFeedback("Sucesso", "Nova Tarefa Criada!");
+
   isTaskModalOpen.value = false;
 };
 
-const handleSaveList = (list: any) => {
-  console.log('Lista salva:', list);
+const handleSaveList = () => {
+  feedbackStore.showFeedback("Sucesso", "Nova Lista Criada!");
+
   isListModalOpen.value = false;
 };
 </script>
@@ -34,8 +41,19 @@ const handleSaveList = (list: any) => {
       >
         <div class="flex items-center gap-4">
           <div class="p-3 bg-purple-100 rounded-lg text-purple-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
             </svg>
           </div>
           <div>
@@ -53,8 +71,19 @@ const handleSaveList = (list: any) => {
       >
         <div class="flex items-center gap-4">
           <div class="p-3 bg-blue-100 rounded-lg text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+              />
             </svg>
           </div>
           <div>
@@ -65,7 +94,6 @@ const handleSaveList = (list: any) => {
       </article>
     </div>
 
-
     <TaskModalComponent
       :open="isTaskModalOpen"
       mode="create"
@@ -75,7 +103,7 @@ const handleSaveList = (list: any) => {
 
     <ListModalComponent
       :open="isListModalOpen"
-      mode="create" 
+      mode="create"
       @save="handleSaveList"
       @close="isListModalOpen = false"
     />
