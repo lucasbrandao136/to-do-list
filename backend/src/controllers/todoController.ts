@@ -69,6 +69,7 @@ export const deleteTodo = async (req: Request, res: Response, next: NextFunction
     }
 
     const deletedTodo = await TodoModel.deleteTodo(todoId);
+    console.log(deletedTodo)
 
     if (!deletedTodo) {
       return res.status(404).json({ message: "Todo não encontrado." });

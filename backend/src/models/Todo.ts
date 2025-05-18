@@ -35,10 +35,12 @@ class TodoModel {
   }
 
   async deleteTodo(todoId: number) {
-    const query = `DELETE * FROM todos WHERE id = $1;`;
+    const query = `DELETE FROM todos WHERE id = $1 RETURNING *;`;
     const values = [todoId];
-    const { rows } = await pool.query(query, values);
-    return rows[0];
+    const result = await pool.query(query, values);
+    // console.log(rows)
+
+    return result.rows[0];
   }
 
   async findById(todoId: number) {
