@@ -5,6 +5,7 @@ import Button from '@/components/ui/Button.vue';
 import FormInput from '../ui/FormInput.vue';
 
 interface Task {
+  id?: number;
   title: string;
   description: string;
   dueDate: string;
@@ -13,7 +14,7 @@ interface Task {
 const props = defineProps<{
   open: boolean;
   mode: 'create' | 'edit';
-  initialData?: Partial<Task>;
+  initialData?: Partial<Task> | null;
 }>();
 
 const emit = defineEmits(['close', 'save']);
@@ -36,7 +37,12 @@ const resetForm = () => {
 
 const handleSubmit = async () => {
   try {
-    const response = await api.post('/new/todo', task.value);
+    let response;
+    if (props.mode === 'edit' && task.value.id) {
+      response = await api.put(`/todo/${task.value.id}`, task.value);
+    } else {
+      response = await api.post('/new/todo', task.value);
+    }
     emit('save', task.value);
     resetForm();
   } catch (error) {

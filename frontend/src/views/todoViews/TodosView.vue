@@ -3,6 +3,7 @@ import { ref, onMounted } from "vue";
 import { api } from "@/services/api";
 import { useLoadingStore } from "@/stores/loadingStore";
 import TaskCardComponent from "@/components/todosComponents/TaskCardComponent.vue";
+import TaskModalComponent from "@/components/todosComponents/TaskModalComponent.vue";
 import ConfirmOverlay from "@/components/commonComponents/ConfirmOverlay.vue";
 import { useFeedbackStore } from "@/stores/feedbackStore";
 // import EmptyState from '@/components/ui/EmptyState.vue';
@@ -65,8 +66,34 @@ const fetchTodos = async (): Promise<void> => {
   }
 };
 
-const handleEdit = (id: number) => {
-  console.log("Edit todo:", id);
+const editingTask = ref<Partial<Todo> | null>(null);
+const isModalOpen = ref(false);
+const modalMode = ref<"create" | "edit">("create");
+
+const handleEdit = (task: Todo) => {
+  const formattedDueDate = task.dueDate
+    ? new Date(task.dueDate).toISOString().split("T")[0]
+    : "";
+
+  const payload = {
+    ...task,
+    dueDate: formattedDueDate,
+  };
+
+  editingTask.value = payload;
+  modalMode.value = "edit";
+  isModalOpen.value = true;
+};
+
+const handleSave = async (savedTask: Todo) => {
+  try {
+    await api.put(`/todo/${savedTask.id}`, savedTask);
+    feedbackStore.showFeedback("Sucesso", "Tarefa atualizada com sucesso!");
+    isModalOpen.value = false;
+    await fetchTodos();
+  } catch (error) {
+    setError("Erro ao salvar tarefa. Tente novamente.");
+  }
 };
 
 const openDeleteConfirmation = (id: number) => {
@@ -82,7 +109,7 @@ const handleDelete = async () => {
     isConfirmOverlayVisible.value = false;
     feedbackStore.showFeedback("Sucesso", "Tarefa Excluída!");
 
-     await fetchTodos();
+    await fetchTodos();
   } catch (err) {
     isConfirmOverlayVisible.value = false;
     setError("Erro ao excluir tarefa. Tente novamente.");
@@ -106,7 +133,7 @@ onMounted(() => {
         v-for="todo in todos"
         :key="todo.id"
         :todo="todo"
-        @edit="handleEdit(todo.id)"
+        @edit="handleEdit(todo)"
         @delete="openDeleteConfirmation(todo.id)"
       />
     </template>
@@ -121,6 +148,14 @@ onMounted(() => {
           isConfirmOverlayVisible = false;
         }
       "
+    />
+
+    <TaskModalComponent
+      :open="isModalOpen"
+      :mode="modalMode"
+      :initialData="editingTask"
+      @close="isModalOpen = false"
+      @save="handleSave"
     />
 
     <!-- <EmptyState 

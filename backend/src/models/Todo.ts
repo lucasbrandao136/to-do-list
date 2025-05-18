@@ -25,11 +25,21 @@ class TodoModel {
 
   async updateTodo(todo: ITodo) {
     const query = `
-    UPDATE todos (title, description, updated_at, due_date, completed)
-    SET title = $2, description = $3, updated_at = NOW(), due_date = $4, completed = $5
+     UPDATE todos
+    SET title = $2, 
+        description = $3, 
+        updated_at = NOW(), 
+        due_date = $4, 
+        completed = $5
     WHERE id = $1
     RETURNING id, user_id, title, description, created_at, updated_at, due_date, completed;`;
-    const values = [todo.id, todo.title, todo.description, todo.dueDate, todo.completed];
+    const values = [
+      todo.id,
+      todo.title,
+      todo.description,
+      todo.dueDate,
+      todo.completed,
+    ];
     const { rows } = await pool.query(query, values);
     return rows[0];
   }
