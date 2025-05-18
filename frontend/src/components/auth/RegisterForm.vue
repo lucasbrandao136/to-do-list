@@ -1,8 +1,20 @@
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from "vue";
+import { ref, onBeforeUnmount, watch } from "vue";
 import FormInput from "../ui/FormInput.vue";
 import PasswordStrengthMeter from "./PasswordStrengthMeter.vue";
 import Button from "../ui/Button.vue";
+import { validateNewUser } from "@/validation/userValidation";
+
+const errorMessages = ref<Record<string, string>>({});
+
+const mensagensMap: Record<string, string> = {
+  email: "Email é obrigatório.",
+  invalidEmail: "Email inválido.",
+  password: "Senha deve ter ao menos 8 caracteres.",
+  fullName: "Nome completo é obrigatório.",
+  displayName: "Nome de usuário é obrigatório.",
+  birthday: "Data de nascimento é obrigatória.",
+};
 
 interface Emits {
   (
@@ -13,7 +25,7 @@ interface Emits {
       fullName: string;
       displayName: string;
       birthday: string;
-      photoUrl: string;
+      photoFile: File | null;
     }
   ): void;
 }
@@ -26,32 +38,34 @@ const form = ref({
   fullName: "",
   displayName: "",
   birthday: "",
-  photoUrl: "",
+  photoFile: null as File | null,
 });
 
 const passwordStrength = ref(0);
 const fileInput = ref<HTMLInputElement | null>(null);
 const filePreview = ref<string>("");
-const isLoading = ref(false);
+
+const props = defineProps({
+  loading: {
+    type: Boolean,
+    default: false,
+  },
+});
 
 const handleFileChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
   const selectedFile = target.files?.[0];
 
-  // Limpa o preview anterior
   if (filePreview.value) {
     URL.revokeObjectURL(filePreview.value);
   }
 
   if (selectedFile) {
     filePreview.value = URL.createObjectURL(selectedFile);
+    form.value.photoFile = selectedFile;
   } else {
     filePreview.value = "";
-  }
-
-  // Força a atualização do valor do input
-  if (fileInput.value) {
-    fileInput.value.files = target.files;
+    form.value.photoFile = null;
   }
 };
 
@@ -70,8 +84,47 @@ const handlePasswordInput = (value: string) => {
 };
 
 const handleSubmit = () => {
+  const { errors } = validateNewUser(form.value);
+
+  if (errors.length) {
+    errorMessages.value = {};
+    errors.forEach((chave) => {
+      errorMessages.value[chave] = mensagensMap[chave];
+    });
+    return;
+  }
+
+  errorMessages.value = {};
   emit("submit", form.value);
 };
+
+watch(
+  () => form.value.fullName,
+  () => (errorMessages.value.fullName = "")
+);
+
+watch(
+  () => form.value.displayName,
+  () => (errorMessages.value.displayName = "")
+);
+
+watch(
+  () => form.value.email,
+  () => {
+    errorMessages.value.email = "";
+    errorMessages.value.invalidEmail = "";
+  }
+);
+
+watch(
+  () => form.value.password,
+  () => (errorMessages.value.password = "")
+);
+
+watch(
+  () => form.value.birthday,
+  () => (errorMessages.value.birthday = "")
+);
 
 onBeforeUnmount(() => {
   if (filePreview.value) {
@@ -81,61 +134,85 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <form class="space-y-4" @submit.prevent="handleSubmit">
-    <FormInput
-      v-model="form.fullName"
-      label="Nome completo"
-      id="fullName"
-      type="text"
-      required
-    />
+  <form class="space-y-4" @submit.prevent="handleSubmit" novalidate>
+    <div>
+      <FormInput
+        v-model="form.fullName"
+        label="Nome completo"
+        id="fullName"
+        type="text"
+      />
+      <p v-if="errorMessages.fullName" class="text-red-600 text-xs ml-1">
+        {{ errorMessages.fullName }}
+      </p>
+    </div>
 
-    <FormInput
-      v-model="form.displayName"
-      label="Nome de usuário"
-      id="displayName"
-      type="text"
-      required
-    />
+    <div>
+      <FormInput
+        v-model="form.displayName"
+        label="Nome de usuário"
+        id="displayName"
+        type="text"
+      />
+      <p v-if="errorMessages.displayName" class="text-red-600 text-xs ml-1">
+        {{ errorMessages.displayName }}
+      </p>
+    </div>
 
-    <FormInput
-      v-model="form.email"
-      label="Email"
-      id="email"
-      type="email"
-      autocomplete="email"
-      required
-    />
+    <div>
+      <FormInput
+        v-model="form.email"
+        label="Email"
+        id="email"
+        type="email"
+        autocomplete="email"
+      />
+      <p
+        v-if="errorMessages.email && !errorMessages.invalidEmail"
+        class="text-red-600 text-xs ml-1"
+      >
+        {{ errorMessages.email }}
+      </p>
+      <p v-if="errorMessages.invalidEmail" class="text-red-600 text-xs ml-1">
+        {{ errorMessages.invalidEmail }}
+      </p>
+    </div>
 
-    <FormInput
-      v-model="form.birthday"
-      label="Data de nascimento"
-      id="birthday"
-      type="date"
-      required
-    />
+    <div>
+      <FormInput
+        v-model="form.birthday"
+        label="Data de nascimento"
+        id="birthday"
+        type="date"
+      />
+      <p v-if="errorMessages.birthday" class="text-red-600 text-xs ml-1">
+        {{ errorMessages.birthday }}
+      </p>
+    </div>
 
-    <FormInput
-      v-model="form.password"
-      @update:modelValue="handlePasswordInput"
-      label="Senha"
-      id="password"
-      type="password"
-      required
-    >
-      <template #after>
-        <PasswordStrengthMeter :strength="passwordStrength" />
-      </template>
-    </FormInput>
+    <div>
+      <FormInput
+        v-model="form.password"
+        @update:modelValue="handlePasswordInput"
+        label="Senha"
+        id="password"
+        type="password"
+      >
+        <template #after>
+          <PasswordStrengthMeter :strength="passwordStrength" />
+        </template>
+      </FormInput>
+      <p v-if="errorMessages.password" class="text-red-600 text-xs ml-1">
+        {{ errorMessages.password }}
+      </p>
+    </div>
 
     <div class="space-y-2">
       <label class="block text-sm font-medium text-gray-700">
         Foto de perfil
       </label>
 
-      <!-- Área de upload com preview integrado -->
       <div class="flex items-start gap-4">
-        <!-- Preview da imagem -->
         <div v-if="filePreview" class="relative group">
           <img
             :src="filePreview"
@@ -145,15 +222,14 @@ onBeforeUnmount(() => {
           <div
             class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 rounded-lg flex items-center justify-center transition-all duration-200"
           >
-            <span
+            <!-- <span
               class="opacity-0 group-hover:opacity-100 text-white text-xs font-medium bg-black bg-opacity-60 px-2 py-1 rounded transition-opacity duration-200"
             >
               Alterar
-            </span>
+            </span> -->
           </div>
         </div>
 
-        <!-- Área de seleção -->
         <div class="flex-1">
           <input
             ref="fileInput"
@@ -199,7 +275,7 @@ onBeforeUnmount(() => {
     <Button
       type="submit"
       variant="primary"
-      :loading="isLoading"
+      :loading="props.loading"
       class="w-full"
     >
       Criar conta

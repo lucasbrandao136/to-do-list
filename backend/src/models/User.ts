@@ -7,7 +7,7 @@ export interface IUser {
   fullName: string;
   displayName: string;
   birthday: Date;
-  photoUrl?: string;
+  photoUrl: string;
   registeredAt?: Date;
   enabledAt?: boolean;
 }

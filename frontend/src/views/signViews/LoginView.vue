@@ -6,37 +6,41 @@ import { useAuthStore } from "@/stores/auth";
 import AuthFormContainer from "@/components/auth/AuthFormContainer.vue";
 import FormInput from "@/components/ui/FormInput.vue";
 import Button from "@/components/ui/Button.vue";
+import Divider from "@/components/ui/Divider.vue";
+import LoginForm from "@/components/auth/LoginForm.vue";
 
 const router = useRouter();
-const email = ref("");
-const password = ref("");
-const isLoading = ref(false);
-const errorMessage = ref<string | null>(null);
 
-const handleLogin = async () => {
+const isLoading = ref(false);
+
+const loginError = ref<string>("");
+
+const handleLogin = async (formData: { email: string; password: string }) => {
   try {
     isLoading.value = true;
-    errorMessage.value = null;
 
     const response = await api.post("/login", {
-      email: email.value,
-      password: password.value,
+      email: formData.email,
+      password: formData.password,
     });
 
     const { user, token } = response;
 
-    useAuthStore().login({
-      id: user.id,
-      email: user.email,
-      displayName: user.displayName,
-      birthday: user.birthday,
-      photoUrl: user.photoUrl,
-    }, token);
+    useAuthStore().login(
+      {
+        id: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        birthday: user.birthday,
+        photoUrl: user.photoUrl,
+      },
+      token
+    );
 
     router.push("/home");
-  } catch (error: any) {
-    errorMessage.value = error.response?.data?.message || "Erro ao tentar fazer login. Tente novamente.";
-    console.error("Login error:", error);
+  } catch (error) {
+    loginError.value = "invalid";
+    console.log(loginError.value);
   } finally {
     isLoading.value = false;
   }
@@ -45,56 +49,26 @@ const handleLogin = async () => {
 
 <template>
   <AuthFormContainer title="Login">
-    <form class="space-y-4" @submit.prevent="handleLogin">
-      <FormInput
-        v-model="email"
-        label="Email"
-        id="login-email"
-        type="email"
-        autocomplete="username"
-        required
-      />
+    <LoginForm
+      @submit="handleLogin"
+      :loading="isLoading"
+      :loginError="loginError"
+    />
 
-      <FormInput
-        v-model="password"
-        label="Senha"
-        id="login-password"
-        type="password"
-        autocomplete="current-password"
-        required
-      />
+    <Divider text="Não tem uma conta?" class="my-6" />
 
-      <div class="flex items-center justify-between">
-        <router-link 
-          to="/forgot-password" 
-          class="text-sm text-purple-600 hover:text-purple-700 hover:underline"
-        >
-          Esqueceu a senha?
-        </router-link>
-      </div>
+    <router-link to="/register">
+      <Button variant="secondary" class="w-full"> Cadastre-se </Button>
+    </router-link>
 
-      <Button 
-        type="submit" 
-        variant="primary" 
-        class="w-full"
-        :loading="isLoading"
-      >
-        Entrar
-      </Button>
-
-      <div v-if="errorMessage" class="rounded-md bg-red-50 p-3">
-        <p class="text-sm text-red-600">{{ errorMessage }}</p>
-      </div>
-    </form>
-
-    <div class="mt-6 text-center text-sm text-gray-600">
+    <!-- <div class="mt-6 text-center text-sm text-gray-600">
       Não tem uma conta?
-      <router-link 
-        to="/register" 
+      <router-link
+        to="/register"
         class="font-medium text-purple-600 hover:text-purple-700 hover:underline"
       >
         Cadastre-se
       </router-link>
-    </div>
+    </div> -->
   </AuthFormContainer>
 </template>

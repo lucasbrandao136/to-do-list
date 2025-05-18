@@ -15,7 +15,21 @@ export const register = async (
     const { email, password, fullName, displayName, birthday, photoUrl } =
       req.body;
 
-    const existingUser = await UserModel.findByEmail(email);
+    if ( 
+      !email ||
+      typeof email !== "string" ||
+      email.trim() === "" ||
+      !password ||
+      typeof password !== "string" ||
+      password.trim() === "" ||
+      !fullName ||
+      typeof fullName !== "string" ||
+      fullName.trim() === '' ||
+      displayName
+    ) {
+      return 
+    }
+      const existingUser = await UserModel.findByEmail(email);
     if (existingUser) {
       return res.status(400).json({ message: "Email já cadastrado." });
     }
@@ -44,6 +58,15 @@ export const login = async (
 ): Promise<any> => {
   try {
     const { email, password } = req.body;
+
+    if (
+      typeof email !== "string" ||
+      email.trim() === "" ||
+      typeof password !== "string" ||
+      password.trim() === ""
+    ) {
+      return res.status(400).json({ message: "Credenciais Inválidas" });
+    }
 
     const user = await UserModel.findByEmail(email);
     if (!user) {

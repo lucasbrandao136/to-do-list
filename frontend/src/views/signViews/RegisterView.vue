@@ -6,7 +6,6 @@ import AuthFormContainer from "@/components/auth/AuthFormContainer.vue";
 import RegisterForm from "@/components/auth/RegisterForm.vue";
 import Divider from "@/components/ui/Divider.vue";
 import Button from "@/components/ui/Button.vue";
-
 const errorMessage = ref<string | null>(null);
 const isLoading = ref(false);
 
@@ -16,7 +15,7 @@ const handleRegister = async (formData: {
   fullName: string;
   displayName: string;
   birthday: string;
-  photoUrl: string;
+  photoFile?: File | null;
 }) => {
   try {
     isLoading.value = true;
@@ -24,7 +23,6 @@ const handleRegister = async (formData: {
 
     await api.post("/register", formData);
     alert("Cadastro realizado com sucesso!");
-    // Redirecionar para login ou página inicial
   } catch (error: any) {
     errorMessage.value =
       error.response?.data?.message || "Erro no cadastro. Tente novamente.";
