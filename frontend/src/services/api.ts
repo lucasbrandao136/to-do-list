@@ -51,4 +51,9 @@ export const api = {
     request(endpoint, {
       method: "DELETE",
     }),
+  patch: (endpoint: string, body?: any) =>
+    request(endpoint, {
+      method: "PATCH",
+      body,
+    }),
 };

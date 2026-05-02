@@ -6,7 +6,6 @@ import TaskCardComponent from "@/components/todosComponents/TaskCardComponent.vu
 import TaskModalComponent from "@/components/todosComponents/TaskModalComponent.vue";
 import ConfirmOverlay from "@/components/commonComponents/ConfirmOverlay.vue";
 import { useFeedbackStore } from "@/stores/feedbackStore";
-// import EmptyState from '@/components/ui/EmptyState.vue';
 
 interface Todo {
   id: number;
@@ -54,9 +53,8 @@ const fetchTodos = async (): Promise<void> => {
     loadingStore.setLoading(true);
     error.value = null;
     const response = await api.get("/todos");
-    todos.value = response.data || response;
+    todos.value = response;
   } catch (err: any) {
-    console.error("Failed to fetch todos:", err);
     setError(
       err.response?.data?.message ||
         "Erro ao carregar tarefas. Tente novamente."
@@ -83,6 +81,16 @@ const handleEdit = (task: Todo) => {
   editingTask.value = payload;
   modalMode.value = "edit";
   isModalOpen.value = true;
+};
+
+const handleToggleComplete = async (id: number) => {
+  try {
+    await api.patch(`/todo/${id}/toggle`);
+    feedbackStore.showFeedback("Sucesso", "Status da tarefa atualizado!");
+    await fetchTodos();
+  } catch (err) {
+    setError("Erro ao atualizar tarefa. Tente novamente.");
+  }
 };
 
 const handleSave = async (savedTask: Todo) => {
@@ -135,6 +143,7 @@ onMounted(() => {
         :todo="todo"
         @edit="handleEdit(todo)"
         @delete="openDeleteConfirmation(todo.id)"
+        @toggle-complete="handleToggleComplete(todo.id)"
       />
     </template>
 
@@ -157,12 +166,5 @@ onMounted(() => {
       @close="isModalOpen = false"
       @save="handleSave"
     />
-
-    <!-- <EmptyState 
-      v-else
-      title="Nenhuma tarefa encontrada"
-      description="Comece criando sua primeira tarefa"
-      icon="📝"
-    /> -->
   </div>
 </template>

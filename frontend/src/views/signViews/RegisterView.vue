@@ -20,13 +20,10 @@ const handleRegister = async (formData: {
   try {
     isLoading.value = true;
     errorMessage.value = null;
-
     await api.post("/register", formData);
     alert("Cadastro realizado com sucesso!");
   } catch (error: any) {
-    errorMessage.value =
-      error.response?.data?.message || "Erro no cadastro. Tente novamente.";
-    console.error("Erro ao cadastrar:", error);
+    errorMessage.value = error.message || "Erro no cadastro. Tente novamente.";
   } finally {
     isLoading.value = false;
   }
@@ -34,7 +31,10 @@ const handleRegister = async (formData: {
 </script>
 
 <template>
-  <AuthFormContainer title="Criar conta">
+  <AuthFormContainer
+    title="Criar sua conta"
+    subtitle="Comece a organizar suas tarefas agora."
+  >
     <RegisterForm @submit="handleRegister" :loading="isLoading" />
 
     <Divider text="Já tem uma conta?" class="my-6" />

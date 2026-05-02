@@ -9,6 +9,8 @@ import Load from "../components/commonComponents/Load.vue";
 // Views
 import HomeView from "./todoViews/HomeView.vue";
 import TodosView from "./todoViews/TodosView.vue";
+import ListView from "./todoViews/ListView.vue";
+import ProfileView from "./todoViews/ProfileView.vue";
 
 // Stores
 // import { useLoadingStore } from '../stores/loading'
@@ -24,6 +26,8 @@ const currentPath = ref(window.location.pathname);
 const routes: any = {
   0: HomeView,
   1: TodosView,
+  2: ListView,
+  3: ProfileView,
 };
 
 watch(
@@ -42,6 +46,10 @@ const currentView = computed(() => {
       return routes[0];
     case "todos":
       return routes[1];
+    case "lists":
+      return routes[2];
+    case "profile":
+      return routes[3];
     default:
       return routes[0];
   }

@@ -40,7 +40,6 @@ const handleLogin = async (formData: { email: string; password: string }) => {
     router.push("/home");
   } catch (error) {
     loginError.value = "invalid";
-    console.log(loginError.value);
   } finally {
     isLoading.value = false;
   }
@@ -48,12 +47,24 @@ const handleLogin = async (formData: { email: string; password: string }) => {
 </script>
 
 <template>
-  <AuthFormContainer title="Login">
+  <AuthFormContainer
+    title="Entrar na sua conta"
+    subtitle="Bem-vindo de volta! 👋"
+  >
     <LoginForm
       @submit="handleLogin"
       :loading="isLoading"
       :loginError="loginError"
     />
+
+    <div class="mt-4 text-center">
+      <router-link
+        to="/forgot-password"
+        class="text-sm font-medium text-purple-600 hover:text-purple-700 hover:underline"
+      >
+        Esqueceu sua senha?
+      </router-link>
+    </div>
 
     <Divider text="Não tem uma conta?" class="my-6" />
 

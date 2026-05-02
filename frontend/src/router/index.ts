@@ -39,6 +39,16 @@ const routes: Array<RouteRecordRaw> = [
     name: "new-todo",
     component: HomeScreen,
   },
+  {
+    path: "/lists",
+    name: "lists",
+    component: HomeScreen,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: HomeScreen,
+  },
 ];
 
 const router = createRouter({
@@ -49,7 +59,7 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const auth = useAuthStore();
 
-  const publicPages = ["/login", "/register"];
+  const publicPages = ["/login", "/register", "/forgot-password"];
   const authRequired = !publicPages.includes(to.path);
 
   if (authRequired && !auth.user) {

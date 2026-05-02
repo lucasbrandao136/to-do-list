@@ -34,19 +34,28 @@ auth.loadUserFromLocalStorage();
   <div class="min-h-screen flex flex-col">
     <HeaderComponent v-if="!isAuthPage" @toggleSidebar="toggleSidebar" />
 
-    <!-- FeedbackComponent -->
     <FeedbackComponent class="fixed top-5 right-5 z-50" />
 
-    <div class="flex flex-1">
+    <div class="flex flex-1 relative">
       <SidebarComponent
         v-if="!isAuthPage"
         :open="sidebarOpen"
         @closeSidebar="toggleSidebar"
       />
 
+      <!-- Mobile overlay -->
+      <div
+        v-if="sidebarOpen && !isAuthPage"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm z-30 md:hidden"
+        @click="toggleSidebar"
+      />
+
       <LoadComponent v-if="loadingStore.loading" />
-      <main class="flex-1 p-4 bg-gray-100 overflow-y-auto">
-        <router-view />
+
+      <main class="flex-1 p-4 md:p-6 bg-purple-50 overflow-y-auto min-h-0">
+        <div class="animate-fade-up">
+          <router-view />
+        </div>
       </main>
     </div>
 
