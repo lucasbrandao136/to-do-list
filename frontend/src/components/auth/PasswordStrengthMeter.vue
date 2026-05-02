@@ -5,13 +5,7 @@ interface Props {
 
 const props = defineProps<Props>();
 
-const strengthLabels = [
-  "Muito fraca",
-  "Fraca",
-  "Média",
-  "Boa",
-  "Forte",
-];
+const strengthLabels = ["Muito fraca", "Fraca", "Média", "Boa", "Forte"];
 
 const strengthColors = [
   "bg-red-500",

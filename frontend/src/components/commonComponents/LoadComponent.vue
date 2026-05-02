@@ -1,25 +1,48 @@
 <template>
-    <div class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-90 z-50">
-      <div class="flex space-x-4">
-        <div class="rounded-full h-4 w-4 bg-violet-400 animate-pulse" style="animation-delay: 0s"></div>
-        <div class="rounded-full h-4 w-4 bg-violet-500 animate-pulse" style="animation-delay: 0.2s"></div>
-        <div class="rounded-full h-4 w-4 bg-violet-600 animate-pulse" style="animation-delay: 0.4s"></div>
-        <div class="rounded-full h-4 w-4 bg-violet-700 animate-pulse" style="animation-delay: 0.6s"></div>
-        <div class="rounded-full h-4 w-4 bg-violet-800 animate-pulse" style="animation-delay: 0.8s"></div>
-      </div>
+  <div
+    class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-90 z-50"
+  >
+    <div class="flex space-x-4">
+      <div
+        class="rounded-full h-4 w-4 bg-violet-400 animate-pulse"
+        style="animation-delay: 0s"
+      ></div>
+      <div
+        class="rounded-full h-4 w-4 bg-violet-500 animate-pulse"
+        style="animation-delay: 0.2s"
+      ></div>
+      <div
+        class="rounded-full h-4 w-4 bg-violet-600 animate-pulse"
+        style="animation-delay: 0.4s"
+      ></div>
+      <div
+        class="rounded-full h-4 w-4 bg-violet-700 animate-pulse"
+        style="animation-delay: 0.6s"
+      ></div>
+      <div
+        class="rounded-full h-4 w-4 bg-violet-800 animate-pulse"
+        style="animation-delay: 0.8s"
+      ></div>
     </div>
-  </template>
-  
-  <style>
-  .animate-pulse {
-    animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.5; transform: scale(0.9); }
-  }
-  </style>
+  </div>
+</template>
 
+<style>
+.animate-pulse {
+  animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+}
+</style>
 
 <!-- <template>
     <div class="fixed inset-0 flex items-center justify-center bg-white bg-opacity-90 z-50 overflow-hidden">
