@@ -7,7 +7,6 @@ export interface IUser {
   fullName: string;
   displayName: string;
   birthday: Date;
-  photoUrl: string;
   registeredAt?: Date;
   enabledAt?: boolean;
 }
@@ -15,9 +14,9 @@ export interface IUser {
 class UserModel {
   async createUser(user: IUser) {
     const query = `
-    INSERT INTO users (email, password, full_name, display_name,  birthday, photo_url, registered_at, enabled_at)
-    VALUES ($1, $2, $3, $4, $5, $6, NOW(), true)
-    RETURNING id, email, full_name, display_name, birthday, photo_url, registered_at, enabled_at;
+    INSERT INTO users (email, password, full_name, display_name,  birthday, registered_at, enabled_at)
+    VALUES ($1, $2, $3, $4, $5, NOW(), true)
+    RETURNING id, email, full_name, display_name, birthday, registered_at, enabled_at;
     `;
 
     const values = [
@@ -26,7 +25,7 @@ class UserModel {
       user.fullName,
       user.displayName,
       user.birthday,
-      user.photoUrl || null,
+      
     ];
     const { rows } = await pool.query(query, values);
     return rows[0];
@@ -37,6 +36,15 @@ class UserModel {
       SELECT * FROM users WHERE email = $1;`;
 
     const { rows } = await pool.query(query, [email]);
+    return rows[0];
+  }
+
+  async findById(id: number) {
+    const query = `
+      SELECT id, email, full_name, display_name, birthday, registered_at, enabled_at
+      FROM users WHERE id = $1;`;
+
+    const { rows } = await pool.query(query, [id]);
     return rows[0];
   }
 }

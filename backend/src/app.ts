@@ -5,8 +5,10 @@ dotenv.config();
 
 import userRoutes from "./routes/userRoutes";
 import todoRoutes from './routes/todoRoutes';
+import listRoutes from './routes/listRoutes'
 
 import { authenticate } from "./middlewares/authMiddleware";
+import { getProfile } from "./controllers/userController";
 
 const app = express();
 
@@ -16,8 +18,11 @@ app.use(express.json());
 
 // Rotas
 app.use("/api", userRoutes);
-app.use(authenticate); 
+app.use(authenticate);
+app.get("/api/profile", getProfile);
 app.use('/api', todoRoutes);
+app.use('/api', listRoutes);
+
 
 app.use(
   (
@@ -26,8 +31,8 @@ app.use(
     res: express.Response,
     next: express.NextFunction,
   ) => {
-    console.error(err); 
-    res.status(500).json({ message: "Erro inesperado no servidor." });
+    console.error("[ERROR]", err?.message || err);
+    res.status(500).json({ message: err?.message || "Erro inesperado no servidor." });
   },
 );
 

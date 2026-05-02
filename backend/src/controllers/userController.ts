@@ -12,10 +12,10 @@ export const register = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { email, password, fullName, displayName, birthday, photoUrl } =
+    const { email, password, fullName, displayName, birthday } =
       req.body;
 
-    if ( 
+    if (
       !email ||
       typeof email !== "string" ||
       email.trim() === "" ||
@@ -25,9 +25,9 @@ export const register = async (
       !fullName ||
       typeof fullName !== "string" ||
       fullName.trim() === '' ||
-      displayName
+      !displayName
     ) {
-      return 
+      return res.status(400).json({ message: "Todos os campos obrigatórios são necessários." });
     }
       const existingUser = await UserModel.findByEmail(email);
     if (existingUser) {
@@ -42,10 +42,40 @@ export const register = async (
       fullName,
       displayName,
       birthday,
-      photoUrl,
     });
 
     return res.status(201).json(newUser);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getProfile = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<any> => {
+  try {
+    const userId = req.userId;
+
+    if (!userId || typeof userId !== "number") {
+      return res.status(400).json({ message: "Usuário não encontrado." });
+    }
+
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuário não encontrado." });
+    }
+
+    return res.json({
+      id: user.id,
+      email: user.email,
+      fullName: user.full_name,
+      displayName: user.display_name,
+      birthday: user.birthday,
+      registeredAt: user.registered_at,
+    });
   } catch (error) {
     next(error);
   }
@@ -84,7 +114,6 @@ export const login = async (
       email: user.email,
       displayName: user.display_name,
       fullName: user.full_name,
-      photoUrl: user.photo_url,
       birthday: user.birthday,
       registeredAt: user.registered_at,
       enabledAt: user.enabled_at,

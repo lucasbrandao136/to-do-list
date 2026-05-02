@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 declare global {
   namespace Express {
     interface Request {
-      userId?: string;
+      userId?: number;
     }
   }
 }
@@ -25,7 +25,7 @@ export const authenticate: RequestHandler = (req, res, next) => {
       return;
     }
 
-    const payload = decoded as { id: string };
+    const payload = decoded as { id: number };
     req.userId = payload.id;
     next();
   });

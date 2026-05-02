@@ -4,6 +4,7 @@ export interface ITodo {
   id?: number;
   userId?: number;
   title: string;
+  listId?: number;
   description: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -48,8 +49,6 @@ class TodoModel {
     const query = `DELETE FROM todos WHERE id = $1 RETURNING *;`;
     const values = [todoId];
     const result = await pool.query(query, values);
-    // console.log(rows)
-
     return result.rows[0];
   }
 
@@ -66,6 +65,56 @@ class TodoModel {
 
     const { rows } = await pool.query(query, [userId]);
     return rows;
+  }
+
+  async getOverdueTodos(userId: number) {
+    const query = `
+    SELECT * FROM todos
+    WHERE user_id = $1 AND due_date < NOW() AND completed = false;
+  `;
+    const { rows } = await pool.query(query, [userId]);
+    return rows;
+  }
+
+  async getTodosByList(listId: number) {
+    const query = `SELECT * FROM todos WHERE list_id = $1;`;
+    const { rows } = await pool.query(query, [listId]);
+    return rows;
+  }
+
+  async toggleComplete(todoId: number) {
+    const query = `
+    UPDATE todos
+    SET completed = NOT completed, updated_at = NOW()
+    WHERE id = $1
+    RETURNING *;
+  `;
+    const { rows } = await pool.query(query, [todoId]);
+    return rows[0];
+  }
+
+  async associateTodoToList(todoId: number, listId: number) {
+    const query = `
+      UPDATE todos
+      SET list_id = $2
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const values = [todoId, listId];
+    const { rows } = await pool.query(query, values);
+    return rows[0];
+  }
+
+  async disassociateTodoFromList(todoId: number) {
+    const query = `
+      UPDATE todos
+      SET list_id = NULL
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const values = [todoId];
+    const { rows } = await pool.query(query, values);
+    return rows[0];
   }
 }
 
