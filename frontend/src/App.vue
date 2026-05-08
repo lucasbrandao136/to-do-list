@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useRoute } from "vue-router";
-
+import { useAuthStore } from "./stores/auth";
 import { useLoadingStore } from "@/stores/loadingStore";
-
 import HeaderComponent from "./components/commonComponents/HeaderComponent.vue";
 import SidebarComponent from "./components/commonComponents/SidebarComponent.vue";
 import FooterComponent from "./components/commonComponents/FooterComponent.vue";
@@ -14,29 +13,25 @@ const loadingStore = useLoadingStore();
 const route = useRoute();
 const sidebarOpen = ref(false);
 
+const auth = useAuthStore();
+auth.loadUserFromLocalStorage();
+
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
 };
 
-const isAuthPage = computed(() => {
-  return ["login", "register", "forgot-password"].includes(
-    route.name as string
-  );
-});
-
-import { useAuthStore } from "./stores/auth";
-
-const auth = useAuthStore();
-auth.loadUserFromLocalStorage();
+const isAuthPage = computed(() =>
+  ["login", "register", "forgot-password"].includes(route.name as string)
+);
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="h-screen flex flex-col overflow-hidden">
     <HeaderComponent v-if="!isAuthPage" @toggleSidebar="toggleSidebar" />
 
     <FeedbackComponent class="fixed top-5 right-5 z-50" />
 
-    <div class="flex flex-1 relative">
+    <div class="flex flex-1 overflow-hidden">
       <SidebarComponent
         v-if="!isAuthPage"
         :open="sidebarOpen"
@@ -52,7 +47,7 @@ auth.loadUserFromLocalStorage();
 
       <LoadComponent v-if="loadingStore.loading" />
 
-      <main class="flex-1 p-4 md:p-6 bg-purple-50 overflow-y-auto min-h-0">
+      <main class="flex-1 px-4 pt-3 pb-4 md:px-6 md:pt-4 md:pb-6 bg-purple-50 overflow-y-auto">
         <router-view />
       </main>
     </div>

@@ -36,8 +36,8 @@ const handleSaveList = () => {
 </script>
 
 <template>
-  <div class="p-2 max-w-4xl mx-auto">
-    <header class="mb-8">
+  <div class="max-w-4xl mx-auto">
+    <header class="mb-5">
       <h1 class="text-3xl font-extrabold text-gray-900">
         {{ greeting }}<span v-if="firstName">, {{ firstName }}</span
         >! 👋
