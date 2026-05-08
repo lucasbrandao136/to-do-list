@@ -19,7 +19,9 @@ class List {
             'title', todos.title,
             'description', todos.description,
             'completed', todos.completed,
-            'created_at', todos.created_at
+            'created_at', todos.created_at,
+            'due_date', todos.due_date,
+            'list_id', todos.list_id
           )
         ) FILTER (WHERE todos.id IS NOT NULL), '[]') AS todos
       FROM lists
