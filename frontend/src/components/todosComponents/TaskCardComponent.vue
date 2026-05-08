@@ -162,7 +162,13 @@ const statusClass = computed(() => {
             statusClass,
           ]"
         >
-          {{ todo.completed ? "Concluída" : "Pendente" }}
+          {{
+            todo.completed
+              ? "Concluída"
+              : new Date(todo.dueDate) <= new Date()
+              ? "Atrasada"
+              : "Pendente"
+          }}
         </span>
       </footer>
     </div>

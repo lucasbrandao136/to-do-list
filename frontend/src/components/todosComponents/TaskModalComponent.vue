@@ -128,6 +128,7 @@ const handleClose = () => {
             label="Descrição"
             id="task-description"
             type="textarea"
+            required
             placeholder="Adicione detalhes sobre a tarefa"
           />
 
