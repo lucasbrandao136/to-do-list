@@ -12,7 +12,7 @@ export const register = async (
   next: NextFunction
 ): Promise<any> => {
   try {
-    const { email, password, fullName, displayName, birthday } =
+    const { email, password, fullName, displayName, birthday, photoUrl } =
       req.body;
 
     if (
@@ -42,6 +42,7 @@ export const register = async (
       fullName,
       displayName,
       birthday,
+      photoUrl,
     });
 
     return res.status(201).json(newUser);
@@ -75,6 +76,7 @@ export const getProfile = async (
       displayName: user.display_name,
       birthday: user.birthday,
       registeredAt: user.registered_at,
+      photoUrl: user.photo_url ?? null,
     });
   } catch (error) {
     next(error);
@@ -117,6 +119,7 @@ export const login = async (
       birthday: user.birthday,
       registeredAt: user.registered_at,
       enabledAt: user.enabled_at,
+      photoUrl: user.photo_url ?? null,
     };
 
     return res.json({

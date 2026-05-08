@@ -44,6 +44,7 @@ export const getTodos = async (req: Request, res: Response, next: NextFunction):
       updatedAt: todo.updated_at,
       dueDate: todo.due_date,
       completed: todo.completed,
+      list_id: todo.list_id ?? null,
     }));
 
     return res.json(transformedTodos);
