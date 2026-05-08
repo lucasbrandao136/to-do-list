@@ -13,7 +13,7 @@ const mensagensMap: Record<string, string> = {
   password: "Senha deve ter ao menos 8 caracteres.",
   fullName: "Nome completo é obrigatório.",
   displayName: "Nome de usuário é obrigatório.",
-  birthday: "Data de nascimento é obrigatória.",
+  birthday: "Você precisa ter pelo menos 16 anos para se cadastrar.",
 };
 
 interface Emits {

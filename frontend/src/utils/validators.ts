@@ -19,8 +19,8 @@ export const isValidDate = (date: string) => {
   const dateObj = new Date(date);
   if (isNaN(dateObj.getTime())) return false;
 
-  const tenYearsAgo = new Date();
-  tenYearsAgo.setFullYear(tenYearsAgo.getFullYear() - 10);
+  const minAge = new Date();
+  minAge.setFullYear(minAge.getFullYear() - 16);
 
-  return dateObj <= tenYearsAgo;
+  return dateObj <= minAge;
 };

@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import { api } from "@/services/api";
 import { uploadImageToCloudinary } from "@/services/uploadImage";
+import { useFeedbackStore } from "@/stores/feedbackStore";
 import AuthFormContainer from "@/components/auth/AuthFormContainer.vue";
 import RegisterForm from "@/components/auth/RegisterForm.vue";
 import Divider from "@/components/ui/Divider.vue";
 import Button from "@/components/ui/Button.vue";
+
+const router = useRouter();
+const feedbackStore = useFeedbackStore();
 const errorMessage = ref<string | null>(null);
 const isLoading = ref(false);
 
@@ -20,8 +25,23 @@ const handleRegister = async (formData: {
   try {
     isLoading.value = true;
     errorMessage.value = null;
-    await api.post("/register", formData);
-    alert("Cadastro realizado com sucesso!");
+
+    let photoUrl: string | undefined;
+    if (formData.photoFile) {
+      photoUrl = await uploadImageToCloudinary(formData.photoFile);
+    }
+
+    await api.post("/register", {
+      email: formData.email,
+      password: formData.password,
+      fullName: formData.fullName,
+      displayName: formData.displayName,
+      birthday: formData.birthday,
+      photoUrl,
+    });
+
+    feedbackStore.showFeedback("Sucesso", "Cadastro realizado com sucesso!");
+    setTimeout(() => router.push("/login"), 1500);
   } catch (error: any) {
     errorMessage.value = error.message || "Erro no cadastro. Tente novamente.";
   } finally {
