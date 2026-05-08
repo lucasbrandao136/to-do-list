@@ -68,17 +68,18 @@ const editingTask = ref<Partial<Todo> | null>(null);
 const isModalOpen = ref(false);
 const modalMode = ref<"create" | "edit">("create");
 
+const openCreateModal = () => {
+  editingTask.value = null;
+  modalMode.value = "create";
+  isModalOpen.value = true;
+};
+
 const handleEdit = (task: Todo) => {
   const formattedDueDate = task.dueDate
     ? new Date(task.dueDate).toISOString().split("T")[0]
     : "";
 
-  const payload = {
-    ...task,
-    dueDate: formattedDueDate,
-  };
-
-  editingTask.value = payload;
+  editingTask.value = { ...task, dueDate: formattedDueDate };
   modalMode.value = "edit";
   isModalOpen.value = true;
 };
@@ -93,15 +94,11 @@ const handleToggleComplete = async (id: number) => {
   }
 };
 
-const handleSave = async (savedTask: Todo) => {
-  try {
-    await api.put(`/todo/${savedTask.id}`, savedTask);
-    feedbackStore.showFeedback("Sucesso", "Tarefa atualizada com sucesso!");
-    isModalOpen.value = false;
-    await fetchTodos();
-  } catch (error) {
-    setError("Erro ao salvar tarefa. Tente novamente.");
-  }
+const handleSave = async () => {
+  const msg = modalMode.value === "create" ? "Tarefa criada com sucesso!" : "Tarefa atualizada com sucesso!";
+  feedbackStore.showFeedback("Sucesso", msg);
+  isModalOpen.value = false;
+  await fetchTodos();
 };
 
 const openDeleteConfirmation = (id: number) => {
@@ -131,6 +128,15 @@ onMounted(() => {
 
 <template>
   <div class="space-y-4">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-gray-900">Minhas Tarefas</h1>
+        <p class="text-purple-400 text-sm mt-0.5">{{ todos.length }} tarefa{{ todos.length !== 1 ? 's' : '' }} no total</p>
+      </div>
+      <button class="btn-primary" @click="openCreateModal">+ Nova Tarefa</button>
+    </div>
+
     <!-- Error -->
     <div v-if="error" class="bg-red-50 text-red-600 p-4 rounded-lg">
       {{ error }}
@@ -147,16 +153,25 @@ onMounted(() => {
       />
     </template>
 
+    <div
+      v-else-if="!error"
+      class="bg-white rounded-2xl shadow-purple-sm border border-purple-100/60 p-10 flex flex-col items-center justify-center"
+    >
+      <div class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center mb-4">
+        <svg class="w-7 h-7 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </div>
+      <p class="text-gray-500 text-sm mb-4">Nenhuma tarefa ainda. Crie a primeira!</p>
+      <button class="btn-primary" @click="openCreateModal">+ Nova Tarefa</button>
+    </div>
+
     <ConfirmOverlay
       v-if="isConfirmOverlayVisible"
       title="Confirmar Mudanças?"
       message="Tem certeza que deseja excluir essa tarefa?"
       @confirm="handleDelete()"
-      @cancel="
-        () => {
-          isConfirmOverlayVisible = false;
-        }
-      "
+      @cancel="() => { isConfirmOverlayVisible = false; }"
     />
 
     <TaskModalComponent
