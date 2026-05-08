@@ -76,10 +76,11 @@ to-do-list/
 ├── backend/
 │   └── src/
 │       ├── config/        # Conexão com o banco
-│       ├── controllers/   # Lógica de negócio (C do MVC)
+│       ├── controllers/   # Lógica de negócio 
 │       ├── middlewares/   # Autenticação JWT
-│       ├── models/        # Queries SQL (M do MVC)
-│       └── routes/        # Definição dos endpoints (V do MVC — interface com o cliente)
+│       ├── models/        # Queries SQL 
+│       └── routes/        # Definição dos endpoints 
+
 ├── frontend/
 │   └── src/
 │       ├── components/    # Componentes reutilizáveis
