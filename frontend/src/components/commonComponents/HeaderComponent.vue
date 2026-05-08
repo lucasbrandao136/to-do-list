@@ -34,12 +34,16 @@ const user = authStore.user;
       </button>
 
       <!-- Logo -->
-      <router-link to="/home" class="flex items-center gap-2">
-        <span
-          class="text-xl font-bold bg-gradient-to-r from-purple-700 to-violet-500 bg-clip-text text-transparent"
+      <router-link to="/home" class="flex items-center gap-2.5">
+        <div
+          class="w-8 h-8 bg-gradient-to-br from-purple-600 to-violet-500 rounded-lg flex items-center justify-center"
         >
-          TaskFlow
-        </span>
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <span class="text-xl font-bold text-gray-900 tracking-tight">TaskFlow</span>
       </router-link>
     </div>
 
@@ -50,10 +54,19 @@ const user = authStore.user;
         class="flex items-center gap-2.5 group"
         aria-label="Perfil do usuário"
       >
-        <div
-          class="w-9 h-9 rounded-full bg-gradient-to-br from-purple-600 to-violet-500 flex items-center justify-center text-white font-bold text-sm shadow-purple-sm group-hover:shadow-purple-md transition-all duration-200"
-        >
-          {{ user?.displayName?.charAt(0)?.toUpperCase() || "?" }}
+        <div class="w-9 h-9 rounded-full overflow-hidden shadow-purple-sm group-hover:shadow-purple-md transition-all duration-200 flex-shrink-0">
+          <img
+            v-if="user?.photoUrl"
+            :src="user.photoUrl"
+            :alt="user.displayName"
+            class="w-full h-full object-cover"
+          />
+          <div
+            v-else
+            class="w-full h-full bg-gradient-to-br from-purple-600 to-violet-500 flex items-center justify-center text-white font-bold text-sm"
+          >
+            {{ user?.displayName?.charAt(0)?.toUpperCase() || "?" }}
+          </div>
         </div>
         <span
           class="hidden md:inline text-sm font-medium text-gray-700 group-hover:text-purple-700 transition-colors"

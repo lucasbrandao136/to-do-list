@@ -3,10 +3,10 @@ import { ref, onMounted, computed } from "vue";
 import { useRouter } from "vue-router";
 import { api } from "@/services/api";
 import { useAuthStore } from "@/stores/auth";
-import Button from "@/components/ui/Button.vue";
 
 const router = useRouter();
 const authStore = useAuthStore();
+const photoUrl = computed(() => authStore.user?.photoUrl || null);
 
 interface Profile {
   id: number;
@@ -109,9 +109,20 @@ onMounted(() => {
 
         <div class="relative z-10">
           <div
-            class="w-20 h-20 bg-white/10 backdrop-blur-sm rounded-full mx-auto flex items-center justify-center border-2 border-white/30 shadow-purple-glow"
+            class="w-20 h-20 rounded-full mx-auto border-2 border-white/30 shadow-purple-glow overflow-hidden"
           >
-            <span class="text-3xl font-bold text-white">{{ initial }}</span>
+            <img
+              v-if="photoUrl"
+              :src="photoUrl"
+              :alt="profile.displayName"
+              class="w-full h-full object-cover"
+            />
+            <div
+              v-else
+              class="w-full h-full bg-white/10 backdrop-blur-sm flex items-center justify-center"
+            >
+              <span class="text-3xl font-bold text-white">{{ initial }}</span>
+            </div>
           </div>
           <h1 class="text-xl font-bold text-white mt-4">
             {{ profile.displayName }}
@@ -124,41 +135,39 @@ onMounted(() => {
       <div class="p-6 space-y-1">
         <div
           v-if="profile.fullName"
-          class="flex justify-between items-center py-3.5 border-b border-purple-50"
+          class="flex justify-between items-start gap-6 py-3.5 border-b border-purple-50"
         >
-          <span class="text-purple-400 text-sm font-medium">Nome completo</span>
-          <span class="text-gray-800 font-semibold text-sm">{{
+          <span class="text-purple-400 text-sm font-medium shrink-0">Nome completo</span>
+          <span class="text-gray-800 font-semibold text-sm text-right break-all">{{
             profile.fullName
           }}</span>
         </div>
 
         <div
-          class="flex justify-between items-center py-3.5 border-b border-purple-50"
+          class="flex justify-between items-start gap-6 py-3.5 border-b border-purple-50"
         >
-          <span class="text-purple-400 text-sm font-medium">Email</span>
-          <span class="text-gray-800 font-semibold text-sm">{{
+          <span class="text-purple-400 text-sm font-medium shrink-0">Email</span>
+          <span class="text-gray-800 font-semibold text-sm text-right break-all">{{
             profile.email
           }}</span>
         </div>
 
         <div
           v-if="profile.birthday"
-          class="flex justify-between items-center py-3.5 border-b border-purple-50"
+          class="flex justify-between items-start gap-6 py-3.5 border-b border-purple-50"
         >
-          <span class="text-purple-400 text-sm font-medium"
-            >Data de nascimento</span
-          >
-          <span class="text-gray-800 font-semibold text-sm">{{
+          <span class="text-purple-400 text-sm font-medium shrink-0">Data de nascimento</span>
+          <span class="text-gray-800 font-semibold text-sm text-right">{{
             formattedBirthday
           }}</span>
         </div>
 
         <div
           v-if="profile.registeredAt"
-          class="flex justify-between items-center py-3.5 border-b border-purple-50"
+          class="flex justify-between items-start gap-6 py-3.5 border-b border-purple-50"
         >
-          <span class="text-purple-400 text-sm font-medium">Membro desde</span>
-          <span class="text-gray-800 font-semibold text-sm">{{
+          <span class="text-purple-400 text-sm font-medium shrink-0">Membro desde</span>
+          <span class="text-gray-800 font-semibold text-sm text-right">{{
             formattedRegisteredAt
           }}</span>
         </div>

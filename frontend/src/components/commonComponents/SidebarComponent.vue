@@ -54,34 +54,6 @@ const icons: Record<string, string> = {
       open ? 'translate-x-0 shadow-purple-lg' : '-translate-x-full md:shadow-none',
     ]"
   >
-    <!-- Logo -->
-    <div class="p-6 border-b border-purple-100 flex-shrink-0">
-      <router-link
-        to="/home"
-        class="flex items-center gap-2.5"
-        @click="emit('closeSidebar')"
-      >
-        <div
-          class="w-8 h-8 bg-gradient-to-br from-purple-600 to-violet-500 rounded-lg flex items-center justify-center"
-        >
-          <svg
-            class="w-4 h-4 text-white"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-        </div>
-        <span class="text-xl font-bold text-gray-900 tracking-tight">TaskFlow</span>
-      </router-link>
-    </div>
-
     <!-- Nav -->
     <nav class="flex-1 p-4 space-y-1">
       <button
@@ -139,10 +111,19 @@ const icons: Record<string, string> = {
           @click="emit('closeSidebar')"
           class="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-colors duration-200 group"
         >
-          <div
-            class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
-          >
-            {{ authStore.user?.displayName?.charAt(0)?.toUpperCase() || "?" }}
+          <div class="w-8 h-8 rounded-full flex-shrink-0 overflow-hidden">
+            <img
+              v-if="authStore.user?.photoUrl"
+              :src="authStore.user.photoUrl"
+              :alt="authStore.user.displayName"
+              class="w-full h-full object-cover"
+            />
+            <div
+              v-else
+              class="w-full h-full bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center text-sm font-bold text-white"
+            >
+              {{ authStore.user?.displayName?.charAt(0)?.toUpperCase() || "?" }}
+            </div>
           </div>
           <div class="min-w-0">
             <p class="text-gray-800 text-sm font-medium truncate group-hover:text-purple-700 transition-colors">
