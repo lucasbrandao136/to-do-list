@@ -30,7 +30,4 @@ CREATE TABLE todos (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   due_date TIMESTAMP
-
-  
 );
-
