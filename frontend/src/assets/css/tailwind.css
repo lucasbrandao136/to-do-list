@@ -48,19 +48,19 @@
 }
 
 @layer components {
-  /* ── Sidebar nav items ── */
-  .nav-item {
+  /* ── Sidebar nav items (light theme) ── */
+  .nav-item-light {
     @apply flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl
-           transition-all duration-200 text-white/70 hover:text-white
-           hover:bg-white/10 font-medium;
+           transition-all duration-200 text-gray-600 hover:text-purple-700
+           hover:bg-purple-50 font-medium;
   }
-  .nav-item.active {
-    @apply bg-purple-500/90 text-white shadow-purple-glow font-semibold;
+  .nav-item-light.active {
+    @apply bg-gradient-to-r from-purple-600 to-violet-500 text-white shadow-purple-sm font-semibold;
   }
   .nav-item-logout {
     @apply flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl
-           transition-all duration-200 text-red-400/80 hover:text-red-300
-           hover:bg-red-500/10 font-medium;
+           transition-all duration-200 text-red-500/80 hover:text-red-600
+           hover:bg-red-50 font-medium;
   }
 
   /* ── Buttons ── */

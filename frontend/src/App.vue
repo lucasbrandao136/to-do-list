@@ -53,9 +53,7 @@ auth.loadUserFromLocalStorage();
       <LoadComponent v-if="loadingStore.loading" />
 
       <main class="flex-1 p-4 md:p-6 bg-purple-50 overflow-y-auto min-h-0">
-        <div class="animate-fade-up">
-          <router-view />
-        </div>
+        <router-view />
       </main>
     </div>
 

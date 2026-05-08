@@ -49,25 +49,23 @@ const icons: Record<string, string> = {
 <template>
   <aside
     :class="[
-      'bg-sidebar-gradient fixed md:static md:translate-x-0 top-0 left-0 h-full w-64 z-40',
+      'bg-white border-r border-purple-100 fixed md:static md:translate-x-0 top-0 left-0 h-full w-64 z-40',
       'transition-transform duration-300 flex flex-col sidebar-scroll overflow-y-auto',
-      open
-        ? 'translate-x-0 shadow-purple-lg'
-        : '-translate-x-full md:shadow-none',
+      open ? 'translate-x-0 shadow-purple-lg' : '-translate-x-full md:shadow-none',
     ]"
   >
     <!-- Logo -->
-    <div class="p-6 border-b border-white/10 flex-shrink-0">
+    <div class="p-6 border-b border-purple-100 flex-shrink-0">
       <router-link
         to="/home"
         class="flex items-center gap-2.5"
         @click="emit('closeSidebar')"
       >
         <div
-          class="w-8 h-8 bg-purple-500/30 rounded-lg flex items-center justify-center border border-purple-400/30"
+          class="w-8 h-8 bg-gradient-to-br from-purple-600 to-violet-500 rounded-lg flex items-center justify-center"
         >
           <svg
-            class="w-4 h-4 text-purple-200"
+            class="w-4 h-4 text-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -80,9 +78,7 @@ const icons: Record<string, string> = {
             />
           </svg>
         </div>
-        <span class="text-xl font-bold text-white tracking-tight"
-          >TaskFlow</span
-        >
+        <span class="text-xl font-bold text-gray-900 tracking-tight">TaskFlow</span>
       </router-link>
     </div>
 
@@ -93,7 +89,7 @@ const icons: Record<string, string> = {
         :key="item.path"
         @click="navigate(item)"
         :class="[
-          'nav-item w-full',
+          'nav-item-light w-full',
           router.currentRoute.value.path === item.path ? 'active' : '',
         ]"
       >
@@ -115,7 +111,7 @@ const icons: Record<string, string> = {
     </nav>
 
     <!-- Bottom: user strip + logout -->
-    <div class="flex-shrink-0 border-t border-white/10">
+    <div class="flex-shrink-0 border-t border-purple-100">
       <!-- Logout -->
       <div class="px-4 pt-3">
         <button @click="handleLogout" class="nav-item-logout w-full">
@@ -141,20 +137,18 @@ const icons: Record<string, string> = {
         <router-link
           to="/profile"
           @click="emit('closeSidebar')"
-          class="flex items-center gap-3 p-3 rounded-xl hover:bg-white/10 transition-colors duration-200 group"
+          class="flex items-center gap-3 p-3 rounded-xl hover:bg-purple-50 transition-colors duration-200 group"
         >
           <div
-            class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 border border-purple-300/30 flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
+            class="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
           >
             {{ authStore.user?.displayName?.charAt(0)?.toUpperCase() || "?" }}
           </div>
           <div class="min-w-0">
-            <p
-              class="text-white/90 text-sm font-medium truncate group-hover:text-white transition-colors"
-            >
+            <p class="text-gray-800 text-sm font-medium truncate group-hover:text-purple-700 transition-colors">
               {{ authStore.user?.displayName || "Usuário" }}
             </p>
-            <p class="text-white/40 text-xs truncate">Meu perfil</p>
+            <p class="text-purple-400 text-xs truncate">Meu perfil</p>
           </div>
         </router-link>
       </div>
